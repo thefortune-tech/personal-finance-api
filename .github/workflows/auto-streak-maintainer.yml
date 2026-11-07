@@ -1,0 +1,30 @@
+
+name: Auto Streak Maintainer
+
+on:
+  schedule:
+    # 1. Runs every 5 minutes
+    - cron: '*/5 * * * *'
+    
+    # 2. Runs once daily at a fixed time (e.g., 20:00 UTC / 9:00 PM WAT)
+    - cron: '0 20 * * *'
+
+  # Allows manual triggering directly from the GitHub interface whenever needed
+  workflow_dispatch:
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Modify Log File
+        run: |
+          echo "Automated commit at: $(date -u)" >> daily_log.txt
+
+      - name: Commit and Push Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: automated daily activity sync"
+          branch: main
